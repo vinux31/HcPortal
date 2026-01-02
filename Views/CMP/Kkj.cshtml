@@ -2,24 +2,43 @@
 
 @{
     ViewData["Title"] = "Susunan KKJ Matrix";
+    ViewData["ContainerClass"] = "container-fluid px-4";
 }
 
 <style>
-    /* Agar tabel bisa di-scroll horizontal */
-    .table-responsive {
+    /* Custom Scrollbar for Webkit */
+    .custom-scrollbar::-webkit-scrollbar {
+        height: 12px;
+        width: 12px;
+    }
+    .custom-scrollbar::-webkit-scrollbar-track {
+        background: #f1f1f1;
+        border-radius: 4px;
+    }
+    .custom-scrollbar::-webkit-scrollbar-thumb {
+        background: #c1c1c1;
+        border-radius: 4px;
+    }
+    .custom-scrollbar::-webkit-scrollbar-thumb:hover {
+        background: #a8a8a8;
+    }
+
+    .table-responsive.custom-scrollbar {
         max-height: 80vh;
         overflow-x: auto;
         overflow-y: auto;
         border: 1px solid #ddd;
+        border-radius: 8px; /* Rounded corners for the container */
     }
 
     /* Style Header */
     .matrix-header {
-        background-color: #0d6efd; /* Biru Primary */
+        background: linear-gradient(135deg, #0d6efd 0%, #0a58ca 100%); /* Gradient Blue */
         color: white;
         text-align: center;
         vertical-align: middle;
         font-size: 0.85rem;
+        box-shadow: 0 2px 4px rgba(0,0,0,0.1);
     }
     
     .matrix-subheader {
@@ -27,57 +46,97 @@
         text-align: center;
         font-weight: bold;
         font-size: 0.8rem;
+        color: #495057;
     }
 
-    /* Agar Kolom Kiri (Kompetensi) Sticky/Diam saat discroll */
+    /* Sticky Columns Styling */
     .sticky-col {
         position: sticky;
         left: 0;
         background-color: white;
         z-index: 10;
         border-right: 2px solid #dee2e6;
+        transition: background-color 0.2s;
     }
     
-    /* Header juga harus sticky */
+    /* Header proper z-indices */
     thead th {
         position: sticky;
         top: 0;
-        z-index: 20; /* Lebih tinggi dari kolom */
+        z-index: 20;
     }
     
-    /* Perbaiki z-index untuk sticky kolom di header */
     thead th.sticky-col {
-        z-index: 30; /* Paling atas */
+        z-index: 30; /* Highest priority: Top-Left intersection */
     }
 
-    /* Ukuran Font Tabel */
+    /* Table Content */
     .table-sm td, .table-sm th {
         font-size: 0.8rem;
-        padding: 0.5rem;
+        padding: 0.6rem 0.5rem; /* Slightly more padding */
+        vertical-align: middle;
     }
     
     .target-cell {
         text-align: center;
-        background-color: #f8f9fa;
+        background-color: #fff;
+        cursor: default;
+        transition: background-color 0.1s;
     }
+
+    /* Crosshair Highlighting Classes */
+    .hover-row > td {
+        background-color: #e8f0fe !important; /* Light Blue tint */
+    }
+    
+    .hover-col {
+        background-color: #e8f0fe !important;
+    }
+    
+    .hover-cell {
+        background-color: #cfe2ff !important; /* Slightly darker blue for the specific cell */
+        font-weight: bold;
+        color: #084298;
+        transform: scale(1.1); /* Subtle pop */
+        transition: transform 0.1s;
+    }
+
+    /* Column Specific Widths to ensure alignment */
+    .col-no { width: 50px; }
+    .col-skill { width: 120px; }
+    .col-subskill { width: 150px; }
+    .col-index { width: 80px; }
+    .col-tech { width: 250px; }
+
 </style>
 
-<div class="mb-3">
-    <h2 class="fw-bold">Matriks Kompetensi (KKJ)</h2>
-    <p class="text-muted mb-0">Unit: CSU Process - GSH, Alkylation & Sour Treating</p>
+<div class="d-flex flex-column flex-md-row justify-content-between align-items-end mb-4 gap-3">
+    <div>
+        <h2 class="fw-bold text-primary mb-1">Matriks Kompetensi (KKJ)</h2>
+        <p class="text-secondary mb-0 fw-medium">Unit: CSU Process - GSH, Alkylation & Sour Treating</p>
+    </div>
+    
+    <div class="d-flex flex-column align-items-end gap-2">
+
+        <!-- Search -->
+        <div class="input-group" style="width: 300px;">
+            <span class="input-group-text bg-white border-end-0"><i class="bi bi-search text-muted"></i></span>
+            <input type="text" id="searchInput" class="form-control border-start-0 ps-0" placeholder="Cari Skill / Kompetensi...">
+        </div>
+    </div>
 </div>
 
-<div class="table-responsive shadow-sm">
-    <table class="table table-bordered table-sm table-hover mb-0" style="min-width: 2000px;">
+<div class="table-responsive shadow-sm custom-scrollbar bg-white">
+    <table class="table table-bordered table-sm table-hover mb-0" id="kkjTable" style="min-width: 2000px;">
         <thead>
             <tr>
-                <th rowspan="3" class="sticky-col bg-white" style="width: 50px;">No</th>
-                <th rowspan="3" class="sticky-col bg-white" style="width: 120px;">Skill Group</th>
-                <th rowspan="3" class="sticky-col bg-white" style="width: 150px;">Subskill Group</th>
-                <th rowspan="3" class="sticky-col bg-white" style="width: 80px;">Indeks</th>
-                <th rowspan="3" class="sticky-col bg-white" style="width: 250px; border-right: 2px solid #999;">Kompetensi Teknis</th>
+                <th rowspan="3" class="sticky-col bg-white col-no">No</th>
+                <th rowspan="3" class="sticky-col bg-white col-skill">Skill Group</th>
+                <th rowspan="3" class="sticky-col bg-white col-subskill">Subskill Group</th>
+                <th rowspan="3" class="sticky-col bg-white col-index">Indeks</th>
+                <th rowspan="3" class="sticky-col bg-white col-tech" style="border-right: 2px solid #999;">Kompetensi Teknis</th>
                 
-                <th colspan="11" class="bg-primary text-white text-center py-2 fs-6">
+                <th colspan="11" class="text-white text-center py-2 fs-6 position-sticky" style="background-color: #0d6efd; left: 0;">
                     CSU Process - GSH, Alkylation & Sour Treating
                 </th>
             </tr>
@@ -118,24 +177,106 @@
             {
                 <tr>
                     <td class="sticky-col text-center">@item.No</td>
-                    <td class="sticky-col">@item.SkillGroup</td>
-                    <td class="sticky-col">@item.SubSkillGroup</td>
+                    <td class="sticky-col text-muted">@item.SkillGroup</td>
+                    <td class="sticky-col text-muted">@item.SubSkillGroup</td>
                     <td class="sticky-col text-center fw-bold">@item.Indeks</td>
                     <td class="sticky-col fw-bold text-primary" style="border-right: 2px solid #999;">@item.Kompetensi</td>
                     
-                    <td class="target-cell fw-bold">@item.Target_SectionHead</td>
-                    <td class="target-cell">@item.Target_SrSpv_GSH</td>
-                    <td class="target-cell">@item.Target_ShiftSpv_GSH</td>
-                    <td class="target-cell">@item.Target_Panelman_GSH</td>
-                    <td class="target-cell">@item.Target_Operator_GSH</td>
-                    <td class="target-cell bg-light">@item.Target_ShiftSpv_ARU</td>
-                    <td class="target-cell bg-light">@item.Target_Panelman_ARU</td>
-                    <td class="target-cell bg-light">@item.Target_Operator_ARU</td>
-                    <td class="target-cell">@item.Target_SrSpv_Facility</td>
-                    <td class="target-cell">@item.Target_JrAnalyst</td>
-                    <td class="target-cell">@item.Target_HSE</td>
+                    <!-- Data Cells with Position Attributes for simpler JS targeting -->
+                    <td class="target-cell fw-bold" data-pos="0">@item.Target_SectionHead</td>
+                    <td class="target-cell" data-pos="1">@item.Target_SrSpv_GSH</td>
+                    <td class="target-cell" data-pos="2">@item.Target_ShiftSpv_GSH</td>
+                    <td class="target-cell" data-pos="3">@item.Target_Panelman_GSH</td>
+                    <td class="target-cell" data-pos="4">@item.Target_Operator_GSH</td>
+                    <td class="target-cell bg-light" data-pos="5">@item.Target_ShiftSpv_ARU</td>
+                    <td class="target-cell bg-light" data-pos="6">@item.Target_Panelman_ARU</td>
+                    <td class="target-cell bg-light" data-pos="7">@item.Target_Operator_ARU</td>
+                    <td class="target-cell" data-pos="8">@item.Target_SrSpv_Facility</td>
+                    <td class="target-cell" data-pos="9">@item.Target_JrAnalyst</td>
+                    <td class="target-cell" data-pos="10">@item.Target_HSE</td>
                 </tr>
             }
         </tbody>
     </table>
 </div>
+
+@section Scripts {
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            
+
+
+            // --- 2. Live Search Functionality ---
+            const searchInput = document.getElementById('searchInput');
+            const tableRows = document.querySelectorAll('#kkjTable tbody tr');
+
+            searchInput.addEventListener('keyup', function(e) {
+                const term = e.target.value.toLowerCase();
+                
+                tableRows.forEach(row => {
+                    // Search in commonly filtered columns: Skill Group, Subskill, Indeks, Kompetensi
+                    const text = row.innerText.toLowerCase();
+                    if(text.includes(term)) {
+                        row.style.display = '';
+                    } else {
+                        row.style.display = 'none';
+                    }
+                });
+            });
+
+            // --- 3. Crosshair Highlighting ---
+            const table = document.getElementById('kkjTable');
+            const cells = table.querySelectorAll('tbody td');
+            
+            // Helper to get index of cell in its row, accounting for sticky columns
+            // Simple approach relies on DOM structure:
+            
+            table.addEventListener('mouseover', function(e) {
+                const cell = e.target.closest('td');
+                if (!cell) return;
+                
+                const mRow = cell.closest('tr');
+                if (!mRow || mRow.parentElement.tagName !== 'TBODY') return;
+
+                // 1. Highlight Row
+                mRow.classList.add('hover-row');
+                
+                // 2. Highlight Column
+                // Get cell Index
+                const cellIndex = cell.cellIndex;
+                
+                // Only highlight if it's a data cell (index >= 5 because 0-4 are sticky info columns)
+                // Note: The sticky columns themselves are <td>s, so we should check index.
+                // Based on THEAD, the first 5 are sticky.
+                
+                if (cellIndex >= 5) {
+                    // Highlight the specific cell stronger
+                    cell.classList.add('hover-cell');
+
+                    // Highlight all cells in this column
+                    table.querySelectorAll('tbody tr').forEach(row => {
+                        const c = row.children[cellIndex];
+                        if(c) c.classList.add('hover-col');
+                    });
+                }
+            });
+
+            table.addEventListener('mouseout', function(e) {
+                const cell = e.target.closest('td');
+                if (!cell) return;
+                
+                const mRow = cell.closest('tr');
+                if (mRow) mRow.classList.remove('hover-row');
+                
+                // Remove col highlights
+                const cellIndex = cell.cellIndex;
+                if (cell.classList.contains('hover-cell')) {
+                     cell.classList.remove('hover-cell');
+                }
+                
+                // We just clear all hover-cols nicely to be safe and simple
+                table.querySelectorAll('.hover-col').forEach(c => c.classList.remove('hover-col'));
+            });
+        });
+    </script>
+}

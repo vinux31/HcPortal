@@ -99,10 +99,10 @@ namespace HcPortal.Controllers
                 // 5. REFINERY PROCESS (Tahun Kedua)
                 new CpdpItem { Kompetensi="Refinery Process Ops & Optimization", Implementasi="Tahun Kedua", KodeSub="5.7", SubOps="Prinsip Dasar & Pengoperasian Alat", SubPanel="Pengoperasian & Interaksi Sub Proses" },
                 new CpdpItem { Kompetensi="Refinery Process Ops & Optimization", Implementasi="Tahun Kedua", KodeSub="5.8", SubOps="Pengoperasian Sub Proses", SubPanel="Start up, Shutdown & Emergency Unit" },
-                new CpdpItem { Kompetensi="Refinery Process Ops & Optimization", Implementasi="Tahun Kedua", KodeSub="5.9", SubOps="Equipment Operations", SubPanel="Process Optimization" },
+                new CpdpItem { Kompetensi="Refinery Process Ops & Optimization", Implementasi="Tahun Kedua", KodeSub="5.9", SubOps="Equipment Operations", SubPanel="-" },
                 
                 // 5. REFINERY PROCESS (Tahun Ketiga)
-                new CpdpItem { Kompetensi="Refinery Process Ops & Optimization", Implementasi="Tahun Ketiga", KodeSub="5.10", SubOps="Karakteristik Unit Operasi", SubPanel="-" },
+                new CpdpItem { Kompetensi="Refinery Process Ops & Optimization", Implementasi="Tahun Ketiga", KodeSub="5.10", SubOps="Karakteristik Unit Operasi", SubPanel="Process Optimization" },
                 new CpdpItem { Kompetensi="Refinery Process Ops & Optimization", Implementasi="Tahun Ketiga", KodeSub="5.11", SubOps="Day to Day Monitoring", SubPanel="-" },
                 new CpdpItem { Kompetensi="Refinery Process Ops & Optimization", Implementasi="Tahun Ketiga", KodeSub="5.12", SubOps="Data Collecting for Optimization", SubPanel="-" },
                 new CpdpItem { Kompetensi="Refinery Process Ops & Optimization", Implementasi="Tahun Ketiga", KodeSub="5.13", SubOps="Operating Windows", SubPanel="-" },

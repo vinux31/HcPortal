@@ -11,10 +11,16 @@
 
 <ul class="nav nav-tabs mb-3" id="myTab" role="tablist">
     <li class="nav-item" role="presentation">
-        <button class="nav-link active" id="proton-tab" data-bs-toggle="tab" data-bs-target="#proton" type="button">PROTON & OTS</button>
+        <button class="nav-link active" id="proton-tab" data-bs-toggle="tab" data-bs-target="#proton" type="button">PROTON</button>
     </li>
     <li class="nav-item" role="presentation">
-        <button class="nav-link" id="ojt-tab" data-bs-toggle="tab" data-bs-target="#ojt" type="button">OJT & IHT</button>
+        <button class="nav-link" id="ots-tab" data-bs-toggle="tab" data-bs-target="#ots" type="button">OTS</button>
+    </li>
+    <li class="nav-item" role="presentation">
+        <button class="nav-link" id="ojt-tab" data-bs-toggle="tab" data-bs-target="#ojt" type="button">OJT</button>
+    </li>
+    <li class="nav-item" role="presentation">
+        <button class="nav-link" id="iht-tab" data-bs-toggle="tab" data-bs-target="#iht" type="button">IHT</button>
     </li>
     <li class="nav-item" role="presentation">
         <button class="nav-link" id="mandatory-tab" data-bs-toggle="tab" data-bs-target="#mandatory" type="button">Mandatory HSSE</button>
@@ -23,6 +29,7 @@
 
 <div class="tab-content" id="myTabContent">
     
+    <!-- Tab PROTON -->
     <div class="tab-pane fade show active" id="proton" role="tabpanel">
         <div class="alert alert-info">
             <i class="bi bi-info-circle"></i> Catatan: Assessment PROTON dilakukan melalui NSO. Token diberikan oleh HC.
@@ -30,10 +37,22 @@
         @{ RenderTable(Model.Where(x => x.Kategori == "PROTON").ToList()); }
     </div>
 
+    <!-- Tab OTS -->
+    <div class="tab-pane fade" id="ots" role="tabpanel">
+        @{ RenderTable(Model.Where(x => x.Kategori == "OTS").ToList()); }
+    </div>
+
+    <!-- Tab OJT -->
     <div class="tab-pane fade" id="ojt" role="tabpanel">
         @{ RenderTable(Model.Where(x => x.Kategori == "OJT").ToList()); }
     </div>
 
+    <!-- Tab IHT -->
+    <div class="tab-pane fade" id="iht" role="tabpanel">
+        @{ RenderTable(Model.Where(x => x.Kategori == "IHT").ToList()); }
+    </div>
+
+    <!-- Tab Mandatory -->
     <div class="tab-pane fade" id="mandatory" role="tabpanel">
         @{ RenderTable(Model.Where(x => x.Kategori == "MANDATORY").ToList()); }
     </div>
